@@ -14,7 +14,7 @@ HP:  3
 Difficulty:  0.116618666667
 Crawlers:  42
 
----------------------------
+-----@-------------@-------
 | c             c      cc |
 |       c   c     c   c   |
 |   c c               c   |
@@ -34,7 +34,7 @@ Crawlers:  42
 |c  c c        c        c |
 |c           c  c   c  c  |
 |   c    c  c c           |
----------------------------
+-------------@-------------
 
 What do you do? ('wsad' to move, spacebar to shoot, x to exit)
 => ws a
