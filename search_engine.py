@@ -123,9 +123,12 @@ Hummus Recipe
 
 def get_page(url):
     try:
-        import urllib
-        # print url
-        return urllib.urlopen(url).read()
+        if url in cache:
+            return cache[url]
+        else:
+            import urllib
+            # print url
+            return urllib.urlopen(url).read()
     except:
         return ""
 
@@ -210,10 +213,11 @@ def compute_ranks(graph):
     return ranks
 
 if __name__ == '__main__':
-    page = get_page('http://www.udacity.com/')
-    #print page
+    seed_page = 'https://github.com/nahumfarchi/Ucrawl/blob/master/ucrawler.py'
+    page = get_page(seed_page)
+    print page
     #index, graph = crawl_web('http://www.udacity.com/')
-    index, graph = crawl_web('http://ninjasandrobots.com/pricing-in-reverse', 2)
+    index, graph = crawl_web(seed_page, 2)
     ranks = compute_ranks(graph)
-    print graph['http://ninjasandrobots.com/pricing-in-reverse']
+    #print graph['http://ninjasandrobots.com/pricing-in-reverse']
     
