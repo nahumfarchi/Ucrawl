@@ -489,8 +489,6 @@ blit_crits(crits, player_room_name)
 graphics(clear, player, ranks, True)
 gameover = False
 
-
-
 while not gameover:
     # Player input
     keypress = raw_input()
