@@ -8,216 +8,16 @@
 #(ie 'ss d' will move twice down, shoot and then move right once)"
 #
 #For best results run this from the command line, as it doesn't work as well from the python gui.
+#
+#Created by Nahum Farchi, 2012
+#
+#This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, #California, 94041, USA.
 
 from sys import stdout
 import os
 import random
 from time import sleep
-
-###################################################################################################
-################################## Search engine code #############################################
-###################################################################################################
-
-cache = {
-   'http://udacity.com/cs101x/urank/index.html': """<html>
-<body>
-<h1>Dave's Cooking Algorithms</h1>
-<p>
-Here are my favorite recipies:
-<ul>
-<li> <a href="http://udacity.com/cs101x/urank/hummus.html">Hummus Recipe</a>
-<li> <a href="http://udacity.com/cs101x/urank/arsenic.html">World's Best Hummus</a>
-<li> <a href="http://udacity.com/cs101x/urank/kathleen.html">Kathleen's Hummus Recipe</a>
-</ul>
-
-For more expert opinions, check out the 
-<a href="http://udacity.com/cs101x/urank/nickel.html">Nickel Chef</a> 
-and <a href="http://udacity.com/cs101x/urank/zinc.html">Zinc Chef</a>.
-</body>
-</html>
-
-
-
-
-
-
-""",
-   'http://udacity.com/cs101x/urank/zinc.html': """<html>
-<body>
-<h1>The Zinc Chef</h1>
-<p>
-I learned everything I know from 
-<a href="http://udacity.com/cs101x/urank/nickel.html">the Nickel Chef</a>.
-</p>
-<p>
-For great hummus, try 
-<a href="http://udacity.com/cs101x/urank/arsenic.html">this recipe</a>.
-
-</body>
-</html>
-
-
-
-
-
-
-""",
-   'http://udacity.com/cs101x/urank/nickel.html': """<html>
-<body>
-<h1>The Nickel Chef</h1>
-<p>
-This is the
-<a href="http://udacity.com/cs101x/urank/kathleen.html">
-best Hummus recipe!
-</a>
-
-</body>
-</html>
-
-
-
-
-
-
-""",
-   'http://udacity.com/cs101x/urank/kathleen.html': """<html>
-<body>
-<h1>
-Kathleen's Hummus Recipe
-</h1>
-<p>
-
-<ol>
-<li> Open a can of garbonzo beans.
-<li> Crush them in a blender.
-<li> Add 3 tablesppons of tahini sauce.
-<li> Squeeze in one lemon.
-<li> Add salt, pepper, and buttercream frosting to taste.
-</ol>
-
-</body>
-</html>
-
-""",
-   'http://udacity.com/cs101x/urank/arsenic.html': """<html>
-<body>
-<h1>
-The Arsenic Chef's World Famous Hummus Recipe
-</h1>
-<p>
-
-<ol>
-<li> Kidnap the <a href="http://udacity.com/cs101x/urank/nickel.html">Nickel Chef</a>.
-<li> Force her to make hummus for you.
-</ol>
-
-</body>
-</html>
-
-""",
-   'http://udacity.com/cs101x/urank/hummus.html': """<html>
-<body>
-<h1>
-Hummus Recipe
-</h1>
-<p>
-
-<ol>
-<li> Go to the store and buy a container of hummus.
-<li> Open it.
-</ol>
-
-</body>
-</html>
-
-
-
-
-""",
-}
-
-def get_page(url):
-    if url in cache:
-        return cache[url]
-    return ""
-
-def get_next_target(page):
-    start_link = page.find('<a href=')
-    if start_link == -1: 
-        return None, 0
-    start_quote = page.find('"', start_link)
-    end_quote = page.find('"', start_quote + 1)
-    url = page[start_quote + 1:end_quote]
-    return url, end_quote
-
-def get_all_links(page):
-    links = []
-    while True:
-        url, endpos = get_next_target(page)
-        if url:
-            links.append(url)
-            page = page[endpos:]
-        else:
-            break
-    return links
-
-def union(a, b):
-    for e in b:
-        if e not in a:
-            a.append(e)
-
-def add_page_to_index(index, url, content):
-    words = content.split()
-    for word in words:
-        add_to_index(index, word, url)
-        
-def add_to_index(index, keyword, url):
-    if keyword in index:
-        index[keyword].append(url)
-    else:
-        index[keyword] = [url]
-    
-def lookup(index, keyword):
-    if keyword in index:
-        return index[keyword]
-    else:
-        return None
-
-def crawl_web(seed): # returns index, graph of inlinks
-    tocrawl = [seed]
-    crawled = []
-    graph = {}  # <url>, [list of pages it links to]
-    index = {} 
-    while tocrawl: 
-        page = tocrawl.pop()
-        if page not in crawled:
-            content = get_page(page)
-            add_page_to_index(index, page, content)
-            outlinks = get_all_links(content)
-            graph[page] = outlinks
-            union(tocrawl, outlinks)
-            crawled.append(page)
-    return index, graph
-
-def compute_ranks(graph):
-    d = 0.8 # damping factor
-    numloops = 10
-    
-    ranks = {}
-    npages = len(graph)
-    for page in graph:
-        ranks[page] = 1.0 / npages
-    
-    for i in range(0, numloops):
-        newranks = {}
-        for page in graph:
-            newrank = (1 - d) / npages
-            for node in graph:
-                if page in graph[node]:
-                    newrank = newrank + d * (ranks[node] / len(graph[node]))
-            newranks[page] = newrank
-        ranks = newranks
-    return ranks
+from search_engine import get_page, get_next_target, get_all_links, union, add_page_to_index, add_to_index, crawl_web, lookup, compute_ranks
 
 ###################################################################################################
 ################################## Game code ######################################################
@@ -225,7 +25,7 @@ def compute_ranks(graph):
 
 #clear = lambda: os.system('cls')
 def clear():
-    for i in range(1,25):
+    for i in xrange(1,25):
         print
 
 def add_vectors(v, u):
@@ -327,13 +127,13 @@ def print_room(dungeon, room):
     stdout.write("%s" % room_str)
     stdout.flush()
 
-def create_dungeon(rooms, ranks):
+def create_dungeon(graph, ranks):
     """
     Creates a new dungeon out of the graph rooms. The size of each room depends on it's rank.
     """
     dungeon = {}
     w, h = 150, 100
-    for r in rooms:
+    for r in graph:
         name, w, h = r, int(w*ranks[r]+10), int(h*ranks[r]+10)
         dungeon[name] = create_room(w, h)
     return dungeon
@@ -419,17 +219,24 @@ def create_doors(dungeon, symbol, graph):
 
 def create_doors_p(dungeon, room_name, symbol, graph, positions, p=0.8):
     n = len(graph[room_name])
+    used = []
+    len_positions = len(positions)
     for destination in graph[room_name]:
         created = False
         j = 0
         while not created:
+            if destination not in graph:
+                break
+            #print "j =", j
             pos = positions[j]
-            if random.random() <= p:
+            if random.random() <= p and pos not in used:
                 create_door(dungeon, room_name, pos, symbol, destination)
-                positions.remove(pos)
+                used.append(pos)
                 created = True
             j = j + 1
-            if j >= len(positions):
+            if len(used) == len_positions:
+                break
+            elif j >= len(positions):
                 j = 0
     
 def blit(obj):
@@ -600,20 +407,28 @@ def create_column(start, end, x):
 def largest(dict):
     return max(v for k,v in dict.iteritems())
 
-def intro(toughest_room):
+def intro(seed_page='http://www.udacity.com/'):
     print "Ucrawler is a turn-based dungeon crawler in which the maze is generated by crawling a seed web page.\n"
     print "The difficulty of each page is according to it's page rank.\n"
     print "Use 'wsad' to move and the spacebar to shoot. (Hint: you can do more than one action each turn. ie 'ss d' will move twice down, shoot and then move right once)\n"
-    print "To win, you must reach ", toughest_room, "and kill all the crawlers (the little c's).\n" 
-    print "Press enter to continue..."
-    raw_input()
+    #print "To win, you must reach ", toughest_room, "and kill all the crawlers (the little c's).\n" 
+    print "Please enter a seed page (press enter to use default)"
+    print "=>",
+    inp = raw_input()
+    if inp == '\n':
+        return seed_page
+    else:
+        return raw_input()
        
 # Initilize game world
 random.seed()
-index, graph = crawl_web('http://udacity.com/cs101x/urank/index.html')
+#print "Please enter a seed page
+#seed_page = intro()
+seed_page = 'http://ninjasandrobots.com/pricing-in-reverse'
+index, graph = crawl_web(seed_page, 3)
 ranks = compute_ranks(graph)
 
-player_room_name = 'http://udacity.com/cs101x/urank/index.html'
+player_room_name = seed_page
 #player_room_name = 'http://udacity.com/cs101x/urank/zinc.html'
 #player_room_name = 'http://udacity.com/cs101x/urank/kathleen.html'
 #player_room_name = 'http://udacity.com/cs101x/urank/arsenic.html'
@@ -621,7 +436,8 @@ dungeon = create_dungeon(graph, ranks)
 center = room_center(dungeon, player_room_name)
 player = create_crit(dungeon, player_room_name, center, 'U', 'player', 3, 'up', 0)
 toughest_room = [k for k, v in ranks.iteritems() if v == max(v for k, v in ranks.iteritems())][0]
-intro(toughest_room)
+print "To win, you must reach ", toughest_room, "and kill all the crawlers (the little c's).\n"
+#intro(toughest_room)
 
 crits = {}
 for room_name in dungeon:
@@ -640,6 +456,8 @@ for room_name in dungeon:
     crits[room_name] = create_crits_p(ranks, n, dungeon, room_name, crit_positions, 'c', 'crawler')
 
     door_positions = create_row(1, w-1, 0) + create_row(1, w-1, h-1) #+ create_column(1, h-1, 0) + create_column(1, h-1, w-1)
+    print "doors: ", len(graph[room_name])
+    print "door_positions: ", len(door_positions)
     create_doors_p(dungeon, room_name, '@', graph, door_positions, 0.01)
     #crits[room_name] = create_crits(n, dungeon, room_name, positions, 'c', 'crawler')
     #print "crits num =", len(crits[room_name])
