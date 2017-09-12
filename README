@@ -1,18 +1,10 @@
-Ucrawler is a turn based dungeon crawler in which the maze's structure is built from the graph returned by crawl_web(). Each node in the graph will be turned into a room, and each edge will be turned into a (one way) door. Yeah, you can get stuck in a room with no doors, creepy...
+Ucrawl is a turn based dungeon crawler in which the maze's structure is built by crawling the web. crawl_web() returns a graph, and then each node in the graph is turned into a room, and each edge is turned into a door.
 
-In the maze, you get to play the letter 'U' and walk around shooting 'c' letters with '*' bullets. As you can see, all of the graphics are text-based.
+You get to play the letter 'U' and walk around shooting citters ('c's).
 
-To win, you must reach the page with the highest page rank and kill all the crawlers (little c's).
+To win, you must reach the room with the highest page rank and kill all the crawlers (little c's).
 
-Use 'wsad' to move and the spacebar to shoot. (Hint: you can do more than one action per turn. (ie 'ss d' will move down twice, shoot and then move right once)
-
-A typical turn of the game looks like so (you are the 'U', 'c' are enemies, '*' are bullets and '@' are doors):
-
-Room:  http://udacity.com/cs101x/urank/kathleen.html
-Score:  93.2949333333
-HP:  3
-Difficulty:  0.116618666667
-Crawlers:  42
+Use 'wsad' to move and the spacebar to shoot. (Hint: you can perform more than one action per turn. (i.e., 'ss d' will move down twice, shoot and then move right once)
 
 -----@-------------@-------
 | c             c      cc |
@@ -36,9 +28,4 @@ Crawlers:  42
 |   c    c  c c           |
 -------------@-------------
 
-What do you do? ('wsad' to move, spacebar to shoot, x to exit)
-=> ws a
-
 Created by Nahum Farchi, 2012
-
-This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, #California, 94041, USA.
